@@ -1,0 +1,63 @@
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="bootstrap/js/bootstrap.min.js"></script>
+
+  <title>Easy market lookup - <%= @itemname %></title>
+</head>
+<body>
+<div class="row-fluid">
+
+
+  <div class="span4">
+    <table class="table table-condensed">
+      <caption> Jita IV - Moon 4 - Caldari Navy Assembly Plant</caption>
+      <thead>
+      <th>Volume</th>
+      <th>Price</th>
+      </thead>
+      <% @stations[60003760][0..10].each do |order| %>
+          <tr>
+            <%= "<td>#{order.vol_remain}</td><td>#{order.price}</td>" %>
+          </tr>
+      <% end %>
+
+    </table>
+  </div>
+
+  <div class="span4">
+    <table class="table table-condensed">
+      <caption>Dodixie IX - Moon 20 - Federation Navy Assembly Plant</caption>
+      <thead>
+      <th>Volume</th>
+      <th>Price</th>
+      </thead>
+      <% @stations[60011866][0..10].each do |order| %>
+          <tr>
+            <%= "<td>#{order.vol_remain}</td><td>#{order.price}</td>" %>
+          </tr>
+      <% end %>
+    </table>
+  </div>
+
+  <div class="span4">
+    <table class="table table-condensed">
+      <caption>Amarr VIII (Oris) - Emperor Family Academy</caption>
+      <thead>
+      <th>Volume</th>
+      <th>Price</th>
+      </thead>
+      <% @stations[60008494][0..10].each do |order| %>
+          <tr>
+            <%= "<td>#{order.vol_remain}</td><td>#{order.price}</td>" %>
+          </tr>
+      <% end %>
+    </table>
+  </div>
+</div>
+
+</body>
+
+</html>
