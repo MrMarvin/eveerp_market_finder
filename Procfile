@@ -1,1 +1,1 @@
-web:   bundle exec ruby lookup.rb -s puma -p $PORT -E production
+web:   bundle exec ruby lookup.rb -s puma -p $PORT
