@@ -23,7 +23,10 @@
             <%= "<td>#{order.vol_remain}</td><td>#{order.price}</td>" %>
           </tr>
       <% end %>
-
+      <tr>
+        <td><a href="http://eve-marketdata.com/price_check.php?step=Show&type_id=<%=@typeid.to_s%>&region_id=10000002&solarsystem_id=&type=historytext" ><i class="icon-time"></i> history</a></td>
+        <td><a href="https://eve-central.com/home/quicklook.html?typeid=<%=@typeid.to_s%>"><i class="icon-search"></i> EC</a></td>
+      </tr>
     </table>
   </div>
 
@@ -39,6 +42,10 @@
             <%= "<td>#{order.vol_remain}</td><td>#{order.price}</td>" %>
           </tr>
       <% end %>
+      <tr>
+        <td><a href="http://eve-marketdata.com/price_check.php?step=Show&type_id=<%=@typeid.to_s%>&region_id=10000032&solarsystem_id=&type=historytext" ><i class="icon-time"></i> history</a></td>
+        <td><a href="https://eve-central.com/home/quicklook.html?typeid=<%=@typeid.to_s%>"><i class="icon-search"></i> EC</a></td>
+      </tr>
     </table>
   </div>
 
@@ -54,6 +61,10 @@
             <%= "<td>#{order.vol_remain}</td><td>#{order.price}</td>" %>
           </tr>
       <% end %>
+      <tr>
+        <td><a href="http://eve-marketdata.com/price_check.php?step=Show&type_id=<%=@typeid.to_s%>&region_id=10000043&solarsystem_id=&type=historytext" ><i class="icon-time"></i> history</a></td>
+        <td><a href="https://eve-central.com/home/quicklook.html?typeid=<%=@typeid.to_s%>"><i class="icon-search"></i> EC</a></td>
+      </tr>
     </table>
   </div>
 </div>

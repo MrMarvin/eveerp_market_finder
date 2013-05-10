@@ -30,6 +30,7 @@ get "/" do
   doc = Nokogiri::XML.parse(open(link).read)
 
   @itemname = doc.xpath("//itemname").text
+  @typeid = params["typeId"].to_i
 
   doc.xpath("//sell_orders/order").each do |order|
     if @stations.keys.include?(order.xpath("station").text.to_i)
