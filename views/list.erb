@@ -39,10 +39,18 @@
           <th>Volume</th>
           <th>Price</th>
           </thead>
-          <% @stations[60003760][0..10].each do |order| %>
+          <% @stations[60003760].sells[0..5].each do |order| %>
               <tr>
-                <%= "<td>#{order.vol_remain}</td><td>#{order.price}</td>" %>
+                <%= "<td>#{order.vol_remain}</td><td>#{order.price.format}</td>" %>
               </tr>
+          <% end %>
+          <tr> <td> </td><td> </td></tr>
+          <tr> <td> </td><td style="color: <%= @stations[60003760].split_percent(1) > 5.0  ? "green" : "grey" %>;"><%= "#{@stations[60003760].split_percent(1)} %" %></td></tr>
+          <tr> <td> </td><td> </td></tr>
+          <% @stations[60003760].buys[0..5].each do |order| %>
+                <tr>
+                  <%= "<td>#{order.vol_remain}</td><td>#{order.price.format}</td>" %>
+                </tr>
           <% end %>
           <tr>
             <td><a href="http://eve-marketdata.com/price_check.php?step=Show&type_id=<%=@typeId.to_s%>&region_id=10000002&solarsystem_id=&type=historytext" ><i class="icon-time"></i> history</a></td>
@@ -58,10 +66,18 @@
           <th>Volume</th>
           <th>Price</th>
           </thead>
-          <% @stations[60011866][0..10].each do |order| %>
+          <% @stations[60011866].sells[0..5].each do |order| %>
               <tr>
-                <%= "<td>#{order.vol_remain}</td><td>#{order.price}</td>" %>
+                <%= "<td>#{order.vol_remain}</td><td>#{order.price.format}</td>" %>
               </tr>
+          <% end %>
+          <tr> <td> </td><td> </td></tr>
+          <tr> <td> </td><td style="color: <%= @stations[60011866].split_percent(1) > 5.0  ? "green" : "grey" %>;"><%= "#{@stations[60011866].split_percent(1)} %" %></td></tr>
+          <tr> <td> </td><td> </td></tr>
+          <% @stations[60011866].buys[0..5].each do |order| %>
+                <tr>
+                  <%= "<td>#{order.vol_remain}</td><td>#{order.price.format}</td>" %>
+                </tr>
           <% end %>
           <tr>
             <td><a href="http://eve-marketdata.com/price_check.php?step=Show&type_id=<%=@typeId.to_s%>&region_id=10000032&solarsystem_id=&type=historytext" ><i class="icon-time"></i> history</a></td>
@@ -77,10 +93,18 @@
           <th>Volume</th>
           <th>Price</th>
           </thead>
-          <% @stations[60008494][0..10].each do |order| %>
+          <% @stations[60008494].sells[0..5].each do |order| %>
               <tr>
-                <%= "<td>#{order.vol_remain}</td><td>#{order.price}</td>" %>
+                <%= "<td>#{order.vol_remain}</td><td>#{order.price.format}</td>" %>
               </tr>
+          <% end %>
+          <tr> <td> </td><td> </td></tr>
+          <tr> <td> </td><td style="color: <%= @stations[60008494].split_percent(1) > 5.0  ? "green" : "grey" %>;"><%= "#{@stations[60008494].split_percent(1)} %" %><%# #{@stations[60008494].avg_sell_price.round} / #{@stations[60008494].avg_buy_price.round}" %></td></tr>
+          <tr> <td> </td><td> </td></tr>
+          <% @stations[60008494].buys[0..5].each do |order| %>
+                <tr>
+                  <%= "<td>#{order.vol_remain}</td><td>#{order.price.format}</td>" %>
+                </tr>
           <% end %>
           <tr>
             <td><a href="http://eve-marketdata.com/price_check.php?step=Show&type_id=<%=@typeId.to_s%>&region_id=10000043&solarsystem_id=&type=historytext" ><i class="icon-time"></i> history</a></td>

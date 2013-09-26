@@ -1,5 +1,7 @@
-require "./itemtype.rb"
-require "./order.rb"
+require "./numeric"
+require "./itemtype"
+require "./order"
+require "./market"
 require 'nokogiri'
 require 'open-uri'
 require 'sinatra'
@@ -12,10 +14,11 @@ module EveCentral
         10000032 # Sinq Lisason / Dodi
     ]
     stations = {
-        60003760 => [], # Jita IV - Moon 4 - Caldari Navy Assembly Plant
-        60011866 => [], # Dodixie IX - Moon 20 - Federation Navy Assembly Plant
-        60008494 => [] # Amarr VIII (Oris) - Emperor Family Academy
+        60003760 => Market.new(60003760), # Jita IV - Moon 4 - Caldari Navy Assembly Plant
+        60011866 => Market.new(60011866), # Dodixie IX - Moon 20 - Federation Navy Assembly Plant
+        60008494 => Market.new(60008494) # Amarr VIII (Oris) - Emperor Family Academy
     }
+
     link = "http://api.eve-central.com/api/quicklook?typeid=#{typeId}&sethours=24&#{(regions.collect { |reg| "regionlimit=#{reg}&" }).join}"
     puts "requesting: #{link}"
     doc = Nokogiri::XML.parse(open(link).read)
@@ -25,7 +28,7 @@ module EveCentral
 
     doc.xpath("//sell_orders/order").each do |order|
       if stations.keys.include?(order.xpath("station").text.to_i)
-        stations[order.xpath("station").text.to_i] << Order.new(order.xpath("region").text.to_i,
+        stations[order.xpath("station").text.to_i].sells << Order.new(order.xpath("region").text.to_i,
                                                                order.xpath("station").text.to_i,
                                                                order.xpath("station_name").text,
                                                                order.xpath("price").text.to_f,
@@ -33,10 +36,21 @@ module EveCentral
                                                                order.xpath("expires").text)
       end
     end
-    stations.keys.each do |station|
-      stations[station].sort_by! {|order| order.price }
+    doc.xpath("//buy_orders/order").each do |order|
+      if stations.keys.include?(order.xpath("station").text.to_i)
+        stations[order.xpath("station").text.to_i].buys << Order.new(order.xpath("region").text.to_i,
+                                                                  order.xpath("station").text.to_i,
+                                                                  order.xpath("station_name").text,
+                                                                  order.xpath("price").text.to_f,
+                                                                  order.xpath("vol_remain").text.to_i,
+                                                                  order.xpath("expires").text)
+      end
     end
-    return stations
+
+    stations.keys.each do |station|
+      stations[station].sort!
+    end
+    stations
   end
   
   def id_from_paste(paste)

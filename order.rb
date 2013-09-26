@@ -9,4 +9,5 @@ class Order
     self.vol_remain = vol_remain
     self.expires = expires
   end
+  
 end
