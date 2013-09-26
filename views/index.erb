@@ -1,0 +1,32 @@
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="bootstrap/js/bootstrap.min.js"></script>
+
+  <title>Easy market lookup</title>
+</head>
+<body>
+    <div id="header" class="row-fluid">
+        <div class="span4">
+            <span id="image">
+                <img id="icon" src="http://image.eveonline.com/Type/0_64.png">
+                <b> NOTHING </b>
+            </span>
+        </div>
+        
+        <div class="span4">
+            <form id="form">
+                <b>paste me:</b> <input type="text" name="paste" style="width: 342px; height: 42px;">
+            </form>
+        </div>
+        <div class="span4">
+            <% if env["HTTP_EVE_TRUSTED"] and env["HTTP_EVE_TRUSTED"] == "No" %>
+                <button type="button" onclick="CCPEVE.requestTrust('<%= request.url %>');">Request Trust</button>
+            <% end %>
+        </div>
+    </div>        
+</body>
+
+</html>

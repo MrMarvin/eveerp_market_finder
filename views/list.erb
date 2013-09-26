@@ -8,67 +8,88 @@
   <title>Easy market lookup - <%= @itemname %></title>
 </head>
 <body>
-<div class="row-fluid">
+    <div id="header" class="row-fluid">
+        <div class="span4">
+            <span id="image">
+                <img id="icon" src="http://image.eveonline.com/Type/<%= @typeId.to_s %>_64.png" onclick="CCPEVE.showInfo(<%= @typeId.to_s %>)">
+                <b><%= @itemname %></b>
+                <i class="icon-shopping-cart icon-2" style="margin-left: 25px;" onclick="CCPEVE.showMarketDetails(<%= @typeId.to_s %>)"></i>
+            </span>
+        </div>
+        
+        <div class="span4">        
+            <form id="form">
+                <b>paste me:</b> <input type="text" name="paste" style="width: 342px; height: 42px;">
+            </form>
+        </div>
+        <div class="span4">
+            <% if env["HTTP_EVE_TRUSTED"] and env["HTTP_EVE_TRUSTED"] == "No" %>
+                <button type="button" onclick="CCPEVE.requestTrust('<%= request.url %>');">Request Trust</button>
+            <% end %>
+        </div>
+    </div>
+        
+    <div class="row-fluid">
 
 
-  <div class="span4">
-    <table class="table table-condensed">
-      <caption> Jita IV - Moon 4 - Caldari Navy Assembly Plant</caption>
-      <thead>
-      <th>Volume</th>
-      <th>Price</th>
-      </thead>
-      <% @stations[60003760][0..10].each do |order| %>
+      <div class="span4">
+        <table class="table table-condensed">
+          <caption> Jita IV - Moon 4 - Caldari Navy Assembly Plant</caption>
+          <thead>
+          <th>Volume</th>
+          <th>Price</th>
+          </thead>
+          <% @stations[60003760][0..10].each do |order| %>
+              <tr>
+                <%= "<td>#{order.vol_remain}</td><td>#{order.price}</td>" %>
+              </tr>
+          <% end %>
           <tr>
-            <%= "<td>#{order.vol_remain}</td><td>#{order.price}</td>" %>
+            <td><a href="http://eve-marketdata.com/price_check.php?step=Show&type_id=<%=@typeId.to_s%>&region_id=10000002&solarsystem_id=&type=historytext" ><i class="icon-time"></i> history</a></td>
+            <td><a href="https://eve-central.com/home/quicklook.html?typeid=<%=@typeId.to_s%>"><i class="icon-search"></i> EC</a></td>
           </tr>
-      <% end %>
-      <tr>
-        <td><a href="http://eve-marketdata.com/price_check.php?step=Show&type_id=<%=@typeid.to_s%>&region_id=10000002&solarsystem_id=&type=historytext" ><i class="icon-time"></i> history</a></td>
-        <td><a href="https://eve-central.com/home/quicklook.html?typeid=<%=@typeid.to_s%>"><i class="icon-search"></i> EC</a></td>
-      </tr>
-    </table>
-  </div>
+        </table>
+      </div>
 
-  <div class="span4">
-    <table class="table table-condensed">
-      <caption>Dodixie IX - Moon 20 - Federation Navy Assembly Plant</caption>
-      <thead>
-      <th>Volume</th>
-      <th>Price</th>
-      </thead>
-      <% @stations[60011866][0..10].each do |order| %>
+      <div class="span4">
+        <table class="table table-condensed">
+          <caption>Dodixie IX - Moon 20 - Federation Navy Assembly Plant</caption>
+          <thead>
+          <th>Volume</th>
+          <th>Price</th>
+          </thead>
+          <% @stations[60011866][0..10].each do |order| %>
+              <tr>
+                <%= "<td>#{order.vol_remain}</td><td>#{order.price}</td>" %>
+              </tr>
+          <% end %>
           <tr>
-            <%= "<td>#{order.vol_remain}</td><td>#{order.price}</td>" %>
+            <td><a href="http://eve-marketdata.com/price_check.php?step=Show&type_id=<%=@typeId.to_s%>&region_id=10000032&solarsystem_id=&type=historytext" ><i class="icon-time"></i> history</a></td>
+            <td><a href="https://eve-central.com/home/quicklook.html?typeid=<%=@typeId.to_s%>"><i class="icon-search"></i> EC</a></td>
           </tr>
-      <% end %>
-      <tr>
-        <td><a href="http://eve-marketdata.com/price_check.php?step=Show&type_id=<%=@typeid.to_s%>&region_id=10000032&solarsystem_id=&type=historytext" ><i class="icon-time"></i> history</a></td>
-        <td><a href="https://eve-central.com/home/quicklook.html?typeid=<%=@typeid.to_s%>"><i class="icon-search"></i> EC</a></td>
-      </tr>
-    </table>
-  </div>
+        </table>
+      </div>
 
-  <div class="span4">
-    <table class="table table-condensed">
-      <caption>Amarr VIII (Oris) - Emperor Family Academy</caption>
-      <thead>
-      <th>Volume</th>
-      <th>Price</th>
-      </thead>
-      <% @stations[60008494][0..10].each do |order| %>
+      <div class="span4">
+        <table class="table table-condensed">
+          <caption>Amarr VIII (Oris) - Emperor Family Academy</caption>
+          <thead>
+          <th>Volume</th>
+          <th>Price</th>
+          </thead>
+          <% @stations[60008494][0..10].each do |order| %>
+              <tr>
+                <%= "<td>#{order.vol_remain}</td><td>#{order.price}</td>" %>
+              </tr>
+          <% end %>
           <tr>
-            <%= "<td>#{order.vol_remain}</td><td>#{order.price}</td>" %>
+            <td><a href="http://eve-marketdata.com/price_check.php?step=Show&type_id=<%=@typeId.to_s%>&region_id=10000043&solarsystem_id=&type=historytext" ><i class="icon-time"></i> history</a></td>
+            <td><a href="https://eve-central.com/home/quicklook.html?typeid=<%=@typeId.to_s%>"><i class="icon-search"></i> EC</a></td>
           </tr>
-      <% end %>
-      <tr>
-        <td><a href="http://eve-marketdata.com/price_check.php?step=Show&type_id=<%=@typeid.to_s%>&region_id=10000043&solarsystem_id=&type=historytext" ><i class="icon-time"></i> history</a></td>
-        <td><a href="https://eve-central.com/home/quicklook.html?typeid=<%=@typeid.to_s%>"><i class="icon-search"></i> EC</a></td>
-      </tr>
-    </table>
-  </div>
-</div>
-
+        </table>
+      </div>
+    </div>
+       
 </body>
 
 </html>
