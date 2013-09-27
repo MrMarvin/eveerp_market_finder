@@ -22,7 +22,7 @@ module Parser
         # paste from wallet transactions
         name = splitted[1]
       end
-      puts "#{name} detected"
+      #puts "#{name} detected"
       begin
         ids << ItemType[name].type_id
       rescue NoMethodError
@@ -47,10 +47,7 @@ get "/" do
     elsif params["paste"]      
       types = type_ids_from_paste(params["paste"])
     end
-    types.each do |type|
-      @lookups = EveCentral::look_up(types)
-      puts "got #{@lookups.size} datasets!"
-    end
+    @lookups = EveCentral::look_up(types)
     erb :list
   end
 

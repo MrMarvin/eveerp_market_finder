@@ -4,14 +4,12 @@ module EveCentral
   
   class <<self
     def look_up(list_of_type_ids)
-      puts "looking up..."
+      puts "#{Time.now} | EveCentral::look_up (#{list_of_type_ids.size} types)"
       @lookups = []
       while not list_of_type_ids.empty?
         ids = list_of_type_ids.slice!(0..NUM_THREADS)
-        ids.map { |id| Thread.new { @lookups << EveCentral::Lookup.new(id) } }.each(&:join) 
-        puts "next round!"
+        ids.map { |id| Thread.new { @lookups << EveCentral::Lookup.new(id) } }.each(&:join)
       end
-      puts "got #{@lookups.size} datasets"
       @lookups
     end
   end
@@ -36,7 +34,7 @@ module EveCentral
        }
 
        link = "http://api.eve-central.com/api/quicklook?typeid=#{typeId}&sethours=24&#{(regions.collect { |reg| "regionlimit=#{reg}&" }).join}"
-       puts "requesting: #{link}"
+       #puts "requesting: #{link}"
        doc = Nokogiri::XML.parse(open(link).read)
 
        @itemname = doc.xpath("//itemname").text
@@ -65,7 +63,6 @@ module EveCentral
        @stations.keys.each do |station|
          @stations[station].sort!
        end
-       puts "lookup für #{@itemname} created: #{self.object_id}"
    end
 
  end
