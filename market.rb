@@ -1,8 +1,9 @@
 class Market
-  attr_accessor :station, :sells, :buys
+  attr_accessor :station, :station_name, :sells, :buys
 
-  def initialize(station)
+  def initialize(station,station_name="")
     @station = station
+    @station_name = station_name
     @sells = []
     @buys = []
   end
