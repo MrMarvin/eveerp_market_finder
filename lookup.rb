@@ -32,9 +32,9 @@ module EveCentral
            60011866 => Market.new(60011866,"Dodixie IX - Moon 20 - Federation Navy Assembly Plant"), 
            60008494 => Market.new(60008494,"Amarr VIII (Oris) - Emperor Family Academy")
        }
-
+       
+       #puts "#{Time.now} | EveCentral::Lookup for #{@typeId} in #{regions.join(" ")}"
        link = "http://api.eve-central.com/api/quicklook?typeid=#{typeId}&sethours=24&#{(regions.collect { |reg| "regionlimit=#{reg}&" }).join}"
-       #puts "requesting: #{link}"
        doc = Nokogiri::XML.parse(open(link).read)
 
        @itemname = doc.xpath("//itemname").text
