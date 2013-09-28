@@ -1,4 +1,17 @@
 module EveCentral
+
+  begin
+    require 'memcached'
+    $cache = Memcached.new("localhost:11211")
+    $cache.set_prefix_key(self.to_s+"_")
+    $cache.set("test","works! :-)")
+    $cache.get("test") 
+  rescue LoadError
+    puts "#{Time.now} | EveCentral | could not load memcached -> NO CACHING SUPPORT!"
+  rescue Memcached::ServerIsMarkedDead
+    puts "#{Time.now} | EveCentral | could not connect to memcached -> NO CACHING SUPPORT!"
+    $cache = nil
+  end
   
   NUM_THREADS=5
   
@@ -15,7 +28,7 @@ module EveCentral
   end
 
   class Lookup
-     
+    
     attr_reader :itemname, :typeId, :stations
 
     def initialize(typeId)
@@ -23,19 +36,33 @@ module EveCentral
       @typeId = typeId.to_i
      
       regions = [
-           10000002, # the Forge / Jita
-           10000043, # Domain / Amarr
-           10000032 # Sinq Lisason / Dodi
+           MapRegion.by_name("The Forge").region_id, # Jita
+           MapRegion.by_name("Domain").region_id, # Amarr
+           MapRegion.by_name("Sinq Laison").region_id # Dodi
        ]
        @stations = {
-           60003760 => Market.new(60003760,"Jita IV - Moon 4 - Caldari Navy Assembly Plant"),
-           60011866 => Market.new(60011866,"Dodixie IX - Moon 20 - Federation Navy Assembly Plant"), 
-           60008494 => Market.new(60008494,"Amarr VIII (Oris) - Emperor Family Academy")
+           Station.by_name("Jita IV - Moon 4 - Caldari Navy Assembly Plant").station_id => Market.new(Station.by_name("Jita IV - Moon 4 - Caldari Navy Assembly Plant")),
+           Station.by_name("Dodixie IX - Moon 20 - Federation Navy Assembly Plant").station_id => Market.new(Station.by_name("Dodixie IX - Moon 20 - Federation Navy Assembly Plant")), 
+           Station.by_name("Amarr VIII (Oris) - Emperor Family Academy").station_id => Market.new(Station.by_name("Amarr VIII (Oris) - Emperor Family Academy"))
        }
        
        #puts "#{Time.now} | EveCentral::Lookup for #{@typeId} in #{regions.join(" ")}"
        link = "http://api.eve-central.com/api/quicklook?typeid=#{typeId}&sethours=24&#{(regions.collect { |reg| "regionlimit=#{reg}&" }).join}"
-       doc = Nokogiri::XML.parse(open(link).read)
+       if $cache
+         thread_safe_cache = $cache.clone
+         begin
+           res = thread_safe_cache.get(link)
+           puts "#{Time.now} | EveCentral | found #{@typeId} in cache"
+         rescue Memcached::NotFound
+           res = open(link).read
+           thread_safe_cache.set(link, res, 60*5)
+           puts "#{Time.now} | EveCentral | stored #{@typeId} in cache"
+         end
+         doc = Nokogiri::XML.parse(res)
+       else
+         # fallback for no cache at all:
+         doc = Nokogiri::XML.parse(open(link).read)
+       end
 
        @itemname = doc.xpath("//itemname").text
 

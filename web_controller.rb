@@ -1,5 +1,7 @@
+require "evestatic"
+include Evestatic
+
 require "./numeric"
-require "./itemtype"
 require "./order"
 require "./market"
 require "./lookup"
@@ -24,8 +26,8 @@ module Parser
       end
       #puts "#{name} detected"
       begin
-        ids << ItemType[name].type_id
-      rescue NoMethodError
+        ids << ItemType.by_name(name).type_id
+      rescue NameError
         puts "no typeID found for: #{name}! Misspelled?"
       end
     end

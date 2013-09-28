@@ -40,7 +40,7 @@
             <% lookup.stations.each_value do |market| %>
              <div class="span4">
                 <table class="table table-condensed">
-                  <caption> <%= market.station_name %></caption>
+                  <caption> <%= market.station.station_name.split(" - ")[0] %></caption>
                   <thead>
                   <th>Volume</th>
                   <th>Price</th>

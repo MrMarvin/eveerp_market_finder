@@ -4,3 +4,4 @@ gem "nokogiri"
 
 gem "sinatra"
 gem "puma"
+gem "evestatic"
