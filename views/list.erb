@@ -66,9 +66,12 @@
         
         <div class="row-fluid">
           
-            <% lookup.stations.each_with_index do |(station_id,market),index|
-               market_left = lookup.stations[lookup.stations.keys[index-1]]
-               market_right = lookup.stations[lookup.stations.keys[(index+1 >= lookup.stations.keys.size ? 0 : index+1)]]             
+            <% gs = Market.greatest_split_percent(lookup.stations.values,1)
+            
+               lookup.stations.each_with_index do |(station_id,market),index|
+
+                   market_left = lookup.stations[lookup.stations.keys[index-1]]
+                   market_right = lookup.stations[lookup.stations.keys[(index+1 >= lookup.stations.keys.size ? 0 : index+1)]]             
             %>
             <div class="span4">
                 <table class="table table-condensed table-hover">
@@ -86,10 +89,12 @@
                   <% end %>
                   <tr> <td><td></td></td><td></td><td></td></tr>
                   <tr>
-                    <td style="font-size: -2; color: <%= market.remote_split_percent(market_left,1) > 5.0  ? "green" : "grey" %>;"><%= "#{market.remote_split_percent(market_left,1)} %" %> </td>
+                    <td style="color: <%= color_for_split(market.remote_split_percent(market_left,1),5.0,gs)%>;">
+                        <%= "#{market.remote_split_percent(market_left,1)} %" %> 
+                    </td>
                     <td>avg. vol.</td>
-                    <td style="color: <%= market.split_percent(1) > 5.0  ? "green" : "grey" %>;"><%= "#{market.split_percent(1)} %" %></td>
-                    <td style="font-size: -2; color: <%= market.remote_split_percent(market_right,1) > 5.0  ? "green" : "grey" %>;"><%= "#{market.remote_split_percent(market_right,1)} %" %> </td>
+                    <td style="color: <%= color_for_split(market.split_percent(1),5.0,gs);%>"><%= "#{market.split_percent(1)} %" %></td>
+                    <td style="color: <%= color_for_split(market.remote_split_percent(market_right,1),5.0,gs) %>;"><%= "#{market.remote_split_percent(market_right,1)} %" %> </td>
                   </tr>
                   <tr> <td></td><td></td><td></td><td></td></tr>
                   <% market.buys[0..5].each do |order| %>

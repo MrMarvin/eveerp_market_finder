@@ -40,4 +40,24 @@ class Market
     ((diff / remote_market.avg_sell_price(top))*100).round(1)
   end
   
+  def greatest_remote_split_percent(remote_markets,top=10)
+    biggest_known = 0.0
+    remote_markets.each do |market|
+      new_split = remote_split_percent(market,top)
+      #puts "calculation split for #{@station.station_name.split(" - ")[0]} #{market.station.station_name.split(" - ")[0]}: #{new_split}"
+      biggest_known = biggest_known > new_split ? biggest_known : new_split
+    end
+    biggest_known
+  end
+  
+  def self.greatest_split_percent(markets,top=10)
+    biggest_known = 0.0
+    markets.each do |market|
+      # note: markets include market, so local split will be included in remote splits
+      new_split = market.greatest_remote_split_percent(markets,top)
+      biggest_known = biggest_known > new_split ? biggest_known : new_split
+    end
+    biggest_known
+  end
+  
 end

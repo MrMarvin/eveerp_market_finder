@@ -35,7 +35,19 @@ module Parser
   end
 end
 
-helpers Parser
+module MarketHelpers
+  def color_for_split(split,percent,greatest) 
+    if split >= greatest
+      "green"
+    elsif split >= percent
+      "lightgreen"
+    else
+      "grey"
+    end      
+  end
+end
+
+helpers Parser, MarketHelpers
 
 get "/" do
   @lookups = []
