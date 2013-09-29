@@ -13,12 +13,14 @@ module EveCentral
     $cache = nil
   end
   
-  NUM_THREADS=5
+  NUM_THREADS=10
+  CACHE_TIME=10*60 # 600 seconds = 10 mins
   
   class <<self
     def look_up(list_of_type_ids)
       puts "#{Time.now} | EveCentral::look_up (#{list_of_type_ids.size} types)"
       @lookups = []
+      list_of_type_ids = list_of_type_ids.uniq
       while not list_of_type_ids.empty?
         ids = list_of_type_ids.slice!(0..NUM_THREADS)
         ids.map { |id| Thread.new { @lookups << EveCentral::Lookup.new(id) } }.each(&:join)
@@ -55,7 +57,7 @@ module EveCentral
            puts "#{Time.now} | EveCentral | found #{@typeId} in cache"
          rescue Memcached::NotFound
            res = open(link).read
-           thread_safe_cache.set(link, res, 60*5)
+           thread_safe_cache.set(link, res, CACHE_TIME)
            puts "#{Time.now} | EveCentral | stored #{@typeId} in cache"
          end
          doc = Nokogiri::XML.parse(res)
