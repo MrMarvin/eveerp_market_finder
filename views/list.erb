@@ -2,8 +2,37 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="jquery-1.10.2.min.js"></script>
   <script src="bootstrap/js/bootstrap.min.js"></script>
+  <script src="jquery.hotkeys.js"></script>
+  <script src="jquery.scrollto.js"></script>
+  <script>
+    function scrollDownAnElement (elem) {
+      scrollTop = $(window).scrollTop();
+      elem.each(function(i, lookup){ // loop through all lookup elements
+        lookup_top = $(lookup).offset().top; // get their top position
+        if (scrollTop < lookup_top-1) { // compare if document is below (plus 1 px for not jumping to the same position twice!)
+          $.scrollTo(lookup_top, 142); // scroll to in 0.142 of a second
+          return false;
+        }
+      });
+    }
+    function scrollUpAnElement (elem) {
+      scrollTop = $(window).scrollTop();
+      $(elem.get().reverse()).each(function(i, lookup){ // loop through all lookup elements
+        lookup_top = $(lookup).offset().top; // get their top position
+        if (scrollTop > lookup_top+1) { // compare if document is below (plus 1 px for not jumping to the same position twice!)
+          $.scrollTo(lookup_top, 142); // scroll to in 0.142 of a second
+          return false;
+        }
+      });
+    }
+  
+   $(document).ready(function(){ 
+      jQuery('body').bind('keypress', 'j', function () {scrollDownAnElement($('.lookup'))});
+      jQuery('body').bind('keypress', 'k', function () {scrollUpAnElement($('.lookup'))});
+    });
+  </script>
 
   <title>Easy market lookup - <%= @lookups.collect {|l| l.itemname}.join(" , ") %></title>
 </head>
@@ -25,7 +54,7 @@
     </div>
     <% @lookups.each do |lookup| %>
     
-        <div id="header" class="row-fluid">
+        <div class="row-fluid lookup">
             <div class="span4">
                 <span id="image">
                     <img id="icon" src="http://image.eveonline.com/Type/<%= lookup.typeId.to_s %>_64.png" onclick="CCPEVE.showInfo(<%= lookup.typeId.to_s %>)">
@@ -37,30 +66,42 @@
         
         <div class="row-fluid">
           
-            <% lookup.stations.each_value do |market| %>
-             <div class="span4">
-                <table class="table table-condensed">
+            <% lookup.stations.each_with_index do |(station_id,market),index|
+               market_left = lookup.stations[lookup.stations.keys[index-1]]
+               market_right = lookup.stations[lookup.stations.keys[(index+1 >= lookup.stations.keys.size ? 0 : index+1)]]             
+            %>
+            <div class="span4">
+                <table class="table table-condensed table-hover">
                   <caption> <%= market.station.station_name.split(" - ")[0] %></caption>
                   <thead>
+                  <th></th>
                   <th>Volume</th>
                   <th>Price</th>
+                  <th></th>
                   </thead>
                   <% market.sells[0..5].each do |order| %>
                       <tr>
-                        <%= "<td>#{order.vol_remain}</td><td>#{order.price.format}</td>" %>
+                        <%= "<td></td><td>#{order.vol_remain}</td><td>#{order.price.format}</td><td></td>" %>
                       </tr>
                   <% end %>
-                  <tr> <td> </td><td> </td></tr>
-                  <tr> <td> </td><td style="color: <%= market.split_percent(1) > 5.0  ? "green" : "grey" %>;"><%= "#{market.split_percent(1)} %" %></td></tr>
-                  <tr> <td> </td><td> </td></tr>
+                  <tr> <td><td></td></td><td></td><td></td></tr>
+                  <tr>
+                    <td style="font-size: -2; color: <%= market.remote_split_percent(market_left,1) > 5.0  ? "green" : "grey" %>;"><%= "#{market.remote_split_percent(market_left,1)} %" %> </td>
+                    <td>avg. vol.</td>
+                    <td style="color: <%= market.split_percent(1) > 5.0  ? "green" : "grey" %>;"><%= "#{market.split_percent(1)} %" %></td>
+                    <td style="font-size: -2; color: <%= market.remote_split_percent(market_right,1) > 5.0  ? "green" : "grey" %>;"><%= "#{market.remote_split_percent(market_right,1)} %" %> </td>
+                  </tr>
+                  <tr> <td></td><td></td><td></td><td></td></tr>
                   <% market.buys[0..5].each do |order| %>
                         <tr>
-                          <%= "<td>#{order.vol_remain}</td><td>#{order.price.format}</td>" %>
+                          <%= "<td></td><td>#{order.vol_remain}</td><td>#{order.price.format}</td><td></td>" %>
                         </tr>
                   <% end %>
                   <tr>
+                    <td></td>
                     <td><a href="http://eve-marketdata.com/price_check.php?step=Show&type_id=<%=lookup.typeId.to_s%>&region_id=10000002&solarsystem_id=&type=historytext" ><i class="icon-time"></i> history</a></td>
                     <td><a href="https://eve-central.com/home/quicklook.html?typeid=<%=lookup.typeId.to_s%>"><i class="icon-search"></i> EC</a></td>
+                    <td></td>
                   </tr>
                 </table>
               </div>
