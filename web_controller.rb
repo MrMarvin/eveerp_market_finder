@@ -36,14 +36,14 @@ module Parser
 end
 
 module MarketHelpers
-  def color_for_split(split,percent,greatest) 
+  def style_for_split(split,percent,greatest)
     if split >= greatest
-      "green"
+      "color: green; font-size: 90%; font-weight: bold;"
     elsif split >= percent
-      "lightgreen"
+      "color: lightgreen; font-size: 90%;"
     else
-      "grey"
-    end      
+      "color: grey; font-size: 90%;"
+    end
   end
 end
 

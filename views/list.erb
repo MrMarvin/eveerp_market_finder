@@ -1,7 +1,8 @@
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen"> 
+  <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
   <script src="jquery-1.10.2.min.js"></script>
   <script src="bootstrap/js/bootstrap.min.js"></script>
   <script src="jquery.hotkeys.js"></script>
@@ -89,12 +90,14 @@
                   <% end %>
                   <tr> <td><td></td></td><td></td><td></td></tr>
                   <tr>
-                    <td style="color: <%= color_for_split(market.remote_split_percent(market_left,1),5.0,gs)%>;">
-                        <%= "#{market.remote_split_percent(market_left,1)} %" %> 
+                    <td style="<%= style_for_split(market.remote_split_percent(market_left,1),5.0,gs)%>">
+                        <i class="icon-resize-full icon-rotate-90"> </i><%= "#{market.remote_split_percent(market_left,1)}%" %> 
                     </td>
-                    <td>avg. vol.</td>
-                    <td style="color: <%= color_for_split(market.split_percent(1),5.0,gs);%>"><%= "#{market.split_percent(1)} %" %></td>
-                    <td style="color: <%= color_for_split(market.remote_split_percent(market_right,1),5.0,gs) %>;"><%= "#{market.remote_split_percent(market_right,1)} %" %> </td>
+                    <td style="font-size: 90%;">avg. vol.</td>
+                    <td style="<%= style_for_split(market.split_percent(1),5.0,gs)%>"><%= "#{market.split_percent(1)}%" %></td>
+                    <td style="<%= style_for_split(market.remote_split_percent(market_right,1),5.0,gs) %>">
+                        <%= "#{market.remote_split_percent(market_right,1)}%" %> <i class="icon-resize-full"></i>
+                    </td>
                   </tr>
                   <tr> <td></td><td></td><td></td><td></td></tr>
                   <% market.buys[0..5].each do |order| %>
