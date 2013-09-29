@@ -17,7 +17,8 @@ class Market
   end
   
   def split_percent(top=10)
-    ((split(top)-1.0)*100).round(1)
+    diff = self.avg_sell_price(top) - self.avg_buy_price(top)
+    ((diff / self.avg_sell_price(top))*100).round(1)
   end
 
   def avg_sell_price(top=0)
@@ -28,6 +29,15 @@ class Market
   def avg_buy_price(top=0)
     self.sort!
     @buys[0..top-1].inject(0.0) {|sum, order| sum+order.price } / ((top != 0 and top < @buys.size) ? top : @buys.size)
+  end
+  
+  def remote_split(remote_market,top=10)
+    remote_market.avg_sell_price(top) / self.avg_buy_price(top)
+  end
+  
+  def remote_split_percent(remote_market,top=10)
+    diff = remote_market.avg_sell_price(top) - self.avg_buy_price(top)
+    ((diff / remote_market.avg_sell_price(top))*100).round(1)
   end
   
 end
