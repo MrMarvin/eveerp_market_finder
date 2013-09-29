@@ -53,7 +53,10 @@
             
         </div>
         <div class="span4" style="margin-top: 25px;">
-            <span class="label label-info">Protip: use j and k keys to navigate like a boss!</span>
+            <span class="label label-info">Protip: use j and k keys to navigate like a boss!</span><br/>
+            <% unless $cache %>
+                <span class="label label-warning">No memcached connected => do not spam reload, kkthx</span>
+            <% end %>
         </div>
     </div>
     <% @lookups.each do |lookup| %>
@@ -97,7 +100,7 @@
                         <i class="icon-resize-full icon-rotate-90"> </i><%= "#{market.remote_split_percent(market_left,1)}%" %> 
                     </td>
                     <td style="font-size: 90%;">avg. vol.</td>
-                    <td style="<%= style_for_split(market.split_percent(1),5.0,gs)%>"><%= "#{market.split_percent(1)}%" %></td>
+                    <td style="<%= style_for_split(market.split_percent(1),5.0,gs)%>"><i class="icon-long-arrow-up"></i> <%= "#{market.split_percent(1)}%" %></td>
                     <td style="<%= style_for_split(market.remote_split_percent(market_right,1),5.0,gs) %>">
                         <%= "#{market.remote_split_percent(market_right,1)}%" %> <i class="icon-resize-full"></i>
                     </td>
