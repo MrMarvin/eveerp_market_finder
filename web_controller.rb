@@ -26,7 +26,7 @@ module Parser
       end
       #puts "#{name} detected"
       begin
-        ids << ItemType.by_name(name).type_id
+        ids << ItemType.by_name(name.gsub(/\ +$/,"")).type_id
       rescue NameError
         puts "no typeID found for: #{name}! Misspelled?"
       end
