@@ -1,5 +1,5 @@
 class Market
-  attr_accessor :station, :station_name, :sells, :buys, :history
+  attr_accessor :station, :station_name, :sells, :buys, :history, :type_id
 
   def initialize(station)
     @station = station

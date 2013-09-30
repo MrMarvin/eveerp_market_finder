@@ -32,25 +32,25 @@ module EveCentral
 
   class Lookup
     
-    attr_reader :itemname, :typeId, :stations
+    attr_reader :itemname, :type_id, :stations
 
-    def initialize(typeId,regions,stations)
+    def initialize(type_id,regions,stations)
 
-      @typeId = typeId.to_i
+      @type_id = type_id.to_i
      
      
       @stations = stations 
-       #puts "#{Time.now} | EveCentral::Lookup for #{@typeId} in #{regions.join(" ")}"
-       link = "http://api.eve-central.com/api/quicklook?typeid=#{typeId}&sethours=24&#{(regions.collect { |reg| "regionlimit=#{reg}&" }).join}"
+       #puts "#{Time.now} | EveCentral::Lookup for #{@type_id} in #{regions.join(" ")}"
+       link = "http://api.eve-central.com/api/quicklook?type_id=#{@type_id}&sethours=24&#{(regions.collect { |reg| "regionlimit=#{reg}&" }).join}"
        if $cache
          thread_safe_cache = $cache.clone
          begin
            res = thread_safe_cache.get(link)
-           puts "#{Time.now} | EveCentral | found #{@typeId} in cache"
+           puts "#{Time.now} | EveCentral | found #{@type_id} in cache"
          rescue Memcached::NotFound
            res = open(link).read
            thread_safe_cache.set(link, res, CACHE_TIME)
-           puts "#{Time.now} | EveCentral | stored #{@typeId} in cache"
+           puts "#{Time.now} | EveCentral | stored #{@type_id} in cache"
          end
          doc = Nokogiri::XML.parse(res)
        else
