@@ -1,7 +1,59 @@
 require 'json'
+require 'digest/sha1'
 NAME_AKA_USERAGENT = "Nivram Mei says: thank you for running this service!".gsub(" ","%20")
 
 module EveMarketdata
+
+  class TypeMarket
+
+    def self.look_up(list_of_type_ids, station_hash)
+      lookups = []
+      puts "#{Time.now} | #{self}::look_up (#{list_of_type_ids.size} types)"
+      type_hash_station_hash = parse_api_res_to_objects(request_from_api(list_of_type_ids.uniq, station_hash),station_hash)
+      type_hash_station_hash.each_pair { |type_id,stations_hash| lookups << self.new(type_id,stations_hash) }
+      lookups
+    end
+
+    def self.request_from_api(type_ids, station_hash)
+      region_ids = station_hash.keys.collect {|station| Station.by_id(station).region_id }
+      link = "http://api.eve-marketdata.com/api/item_orders2.xml?char_name=#{NAME_AKA_USERAGENT}&buysell=a&type_ids=#{type_ids.join(",")}&station_ids=#{station_hash.keys.join(",")}"
+      open(link).read
+    end
+
+    def self.parse_api_res_to_objects(res,station_hash)
+      type_hash_station_hash = {} #temp hash to store each type and its station_hash
+      doc = Nokogiri::XML.parse(res)
+      doc.xpath("//row").each do |row|
+        type_id = row.attribute("typeID").text.to_i
+        station_id = row.attribute("stationID").text.to_i
+
+        # making a deep copy of the station_hash for each type
+        type_hash_station_hash[type_id] = Marshal.load( Marshal.dump(station_hash)) unless type_hash_station_hash[type_id]
+
+        new_order = Order.new(row.attribute("regionID").text.to_i,
+                             station_id,
+                             row.attribute("price").text.to_f,
+                             row.attribute("volRemaining").text.to_i,
+                             row.attribute("expires").text)
+
+        if row.attribute("buysell").text == "s"
+          type_hash_station_hash[type_id][station_id].sells << new_order
+        else
+          type_hash_station_hash[type_id][station_id].buys << new_order
+        end
+      end
+      type_hash_station_hash
+    end
+
+    attr_reader :itemname, :type_id, :stations
+    def initialize(type_id,station_hash)
+      @stations = station_hash
+      @type_id = type_id
+      @itemname = ItemType.by_id(type_id).type_name
+    end
+
+
+  end
 
   class History
 
@@ -14,11 +66,12 @@ module EveMarketdata
       if $cache
         thread_safe_cache = $cache.clone
         begin
-          res = thread_safe_cache.get(link)
+          # using sha1 here to shorten the link, sometimes i does not fit into mongos max key length
+          res = thread_safe_cache.get(Digest::SHA1.hexdigest(link))
           puts "#{Time.now} | #{self} | found #{type_ids.join(",")} in cache"
         rescue Memcached::NotFound
           res = open(link).read
-          thread_safe_cache.set(link, res, CACHE_TIME)
+          thread_safe_cache.set(Digest::SHA1.hexdigest(link), res, CACHE_TIME)
           puts "#{Time.now} | #{self} | stored #{type_ids.join(",")} in cache"
         end
         h = JSON.parse(res)

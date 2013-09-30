@@ -1,3 +1,5 @@
+require 'digest/sha1'
+
 module EveCentral
 
   
@@ -33,11 +35,12 @@ module EveCentral
        if $cache
          thread_safe_cache = $cache.clone
          begin
-           res = thread_safe_cache.get(link)
+           # using sha1 here to shorten the link, sometimes i does not fit into mongos max key length
+           res = thread_safe_cache.get(Digest::SHA1.hexdigest(link))
            puts "#{Time.now} | EveCentral | found #{@type_id} in cache"
          rescue Memcached::NotFound
            res = open(link).read
-           thread_safe_cache.set(link, res, CACHE_TIME)
+           thread_safe_cache.set(Digest::SHA1.hexdigest(link), res, CACHE_TIME)
            puts "#{Time.now} | EveCentral | stored #{@type_id} in cache"
          end
          doc = Nokogiri::XML.parse(res)
@@ -51,7 +54,6 @@ module EveCentral
          if @stations.keys.include?(order.xpath("station").text.to_i)
            @stations[order.xpath("station").text.to_i].sells << Order.new(order.xpath("region").text.to_i,
                                                                   order.xpath("station").text.to_i,
-                                                                  order.xpath("station_name").text,
                                                                   order.xpath("price").text.to_f,
                                                                   order.xpath("vol_remain").text.to_i,
                                                                   order.xpath("expires").text)
@@ -61,15 +63,14 @@ module EveCentral
          if @stations.keys.include?(order.xpath("station").text.to_i)
            @stations[order.xpath("station").text.to_i].buys << Order.new(order.xpath("region").text.to_i,
                                                                      order.xpath("station").text.to_i,
-                                                                     order.xpath("station_name").text,
                                                                      order.xpath("price").text.to_f,
                                                                      order.xpath("vol_remain").text.to_i,
                                                                      order.xpath("expires").text)
          end
        end
 
-       @stations.keys.each do |station|
-         @stations[station].sort!
+       @stations.keys.each do |station_id|
+         @stations[station_id].sort!
        end
    end
 
