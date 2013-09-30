@@ -1,17 +1,5 @@
 module EveCentral
 
-  begin
-    require 'memcached'
-    $cache = Memcached.new("localhost:11211")
-    $cache.set_prefix_key(self.to_s+"_")
-    $cache.set("test","works! :-)")
-    $cache.get("test") 
-  rescue LoadError
-    puts "#{Time.now} | EveCentral | could not load memcached -> NO CACHING SUPPORT!"
-  rescue Memcached::ServerIsMarkedDead
-    puts "#{Time.now} | EveCentral | could not connect to memcached -> NO CACHING SUPPORT!"
-    $cache = nil
-  end
   
   NUM_THREADS=10
   CACHE_TIME=10*60 # 600 seconds = 10 mins

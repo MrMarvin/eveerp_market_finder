@@ -1,18 +1,31 @@
 class ItemLookup
 
+  begin
+    require 'memcached'
+    $cache = Memcached.new("localhost:11211")
+    $cache.set_prefix_key(self.to_s+"_")
+    $cache.set("test","works! :-)")
+    $cache.get("test") 
+  rescue LoadError
+    puts "#{Time.now} | #{self} | could not load memcached -> NO CACHING SUPPORT!"
+  rescue Memcached::ServerIsMarkedDead
+    puts "#{Time.now} | #{self} | could not connect to memcached -> NO CACHING SUPPORT!"
+    $cache = nil
+  end
+
   attr_reader :items
            
-  def initialize(types,regions=nil,stations=nil)
+  def initialize(types,stations=nil)
     @types = types
-    @regions = regions || [
-         MapRegion.by_name("The Forge").region_id, # Jita
-         MapRegion.by_name("Domain").region_id, # Amarr
-         MapRegion.by_name("Sinq Laison").region_id # Dodi
-     ]
+
     @stations = stations ||  {
           Station.by_name("Jita IV - Moon 4 - Caldari Navy Assembly Plant").station_id => Market.new(Station.by_name("Jita IV - Moon 4 - Caldari Navy Assembly Plant")),
           Station.by_name("Dodixie IX - Moon 20 - Federation Navy Assembly Plant").station_id => Market.new(Station.by_name("Dodixie IX - Moon 20 - Federation Navy Assembly Plant")), 
-          Station.by_name("Amarr VIII (Oris) - Emperor Family Academy").station_id => Market.new(Station.by_name("Amarr VIII (Oris) - Emperor Family Academy"))}
+          Station.by_name("Hek VIII - Moon 12 - Boundless Creation Factory").station_id => Market.new(Station.by_name("Hek VIII - Moon 12 - Boundless Creation Factory"))
+          }
+          
+    @regions = @stations.keys.collect {|station| Station.by_id(station).region_id }
+                
     price_lookup!
     history_lookup!
   end

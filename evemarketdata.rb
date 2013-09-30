@@ -5,11 +5,27 @@ module EveMarketdata
 
   class History
 
+    CACHE_TIME=60*60 # one hour
+
     def self.mass_lookup(type_ids,region_ids)
       types = {}
-      type_ids.each {|t_id| types[t_id] = {}}
+      type_ids.each {|t_id| types[t_id] = {}}      
       link = "http://api.eve-marketdata.com/api/item_history2.json?char_name=#{NAME_AKA_USERAGENT}&region_ids=#{region_ids.join(",")}&type_ids=#{type_ids.join(",")}"
-      h = JSON.parse(open(link).read)
+      if $cache
+        thread_safe_cache = $cache.clone
+        begin
+          res = thread_safe_cache.get(link)
+          puts "#{Time.now} | #{self} | found #{type_ids.join(",")} in cache"
+        rescue Memcached::NotFound
+          res = open(link).read
+          thread_safe_cache.set(link, res, CACHE_TIME)
+          puts "#{Time.now} | #{self} | stored #{type_ids.join(",")} in cache"
+        end
+        h = JSON.parse(res)
+      else
+        # fallback for no cache at all:
+        h = JSON.parse(open(link).read)
+      end      
       h["emd"]["result"].each do |result|
         row = result["row"]
         # make sure we have an object for this type and region
