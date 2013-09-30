@@ -5,6 +5,8 @@ require "./numeric"
 require "./order"
 require "./market"
 require "./lookup"
+require "./evecentral"
+require "./evemarketdata"
 require 'nokogiri'
 require 'open-uri'
 require 'sinatra'
@@ -61,7 +63,8 @@ get "/" do
     elsif params["paste"]      
       types = type_ids_from_paste(params["paste"])
     end
-    @lookups = EveCentral::look_up(types)
+      #@lookups = EveCentral::look_up(types)
+      @lookups  = ItemLookup.new(types).items
     erb :list
   end
 

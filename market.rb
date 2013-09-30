@@ -1,10 +1,11 @@
 class Market
-  attr_accessor :station, :station_name, :sells, :buys
+  attr_accessor :station, :station_name, :sells, :buys, :history
 
   def initialize(station)
     @station = station
     @sells = []
     @buys = []
+    @history = nil
   end
   
   def sort!
