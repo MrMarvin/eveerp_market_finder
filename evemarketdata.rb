@@ -6,6 +6,8 @@ module EveMarketdata
 
   class TypeMarket
 
+    CACHE_TIME=10*60 # 10 minutes
+
     def self.look_up(list_of_type_ids, station_hash)
       lookups = []
       puts "#{Time.now} | #{self}::look_up (#{list_of_type_ids.size} types)"
@@ -17,7 +19,30 @@ module EveMarketdata
     def self.request_from_api(type_ids, station_hash)
       region_ids = station_hash.keys.collect {|station| Station.by_id(station).region_id }
       link = "http://api.eve-marketdata.com/api/item_orders2.xml?char_name=#{NAME_AKA_USERAGENT}&buysell=a&type_ids=#{type_ids.join(",")}&station_ids=#{station_hash.keys.join(",")}"
-      open(link).read
+      res = store_to_cache(link,open(link).read) unless res = check_cache(link)
+      res
+    end
+
+    def self.check_cache(link)
+      if $cache
+        thread_safe_cache = $cache.clone
+        begin
+          # using sha1 here to shorten the link, sometimes i does not fit into mongos max key length
+          res = thread_safe_cache.get(Digest::SHA1.hexdigest(link))
+          puts "#{Time.now} | #{self} | found in cache"
+        rescue Memcached::NotFound
+          false
+        end
+        res
+      end
+    end
+
+    def self.store_to_cache(link,res)
+      if $cache
+        $cache.clone.set(Digest::SHA1.hexdigest(link), res, CACHE_TIME)
+        puts "#{Time.now} | #{self} | stored in cache"
+      end
+      res
     end
 
     def self.parse_api_res_to_objects(res,station_hash)

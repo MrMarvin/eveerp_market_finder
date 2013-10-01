@@ -31,7 +31,7 @@ class ItemLookup
   end
   
   def price_lookup!
-     #@items = EveCentral::look_up(@types,@regions,@stations)
+    #@items = EveCentral::look_up(@types,@regions,@stations)
     @items = EveMarketdata::TypeMarket.look_up(@types,@stations)
   end
   
